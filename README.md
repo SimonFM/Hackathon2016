@@ -1,2 +1,2 @@
 # Hackathon2016
-An app that simplifies payment of tolls for e flow.
+This project was made as apart of a hackathon.
