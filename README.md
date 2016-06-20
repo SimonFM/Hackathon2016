@@ -5,3 +5,5 @@ The aim of this hackathon project was to create a web app that is caters for sch
 like how you would book a cinema ticket online.
 
 We used MasterCard's Simplify API to handle the payment requests.
+
+Link to Prezi: https://prezi.com/82jpnuk9w11h
