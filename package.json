@@ -1,0 +1,12 @@
+{
+  "name" : "Go-Cuan",
+  "version" : "0.0.1",
+  "scripts" : {
+    "start" : "node server.js"
+  },
+  "dependencies" : {
+    "express" : "latest",
+    "socket.io" : "latest",
+    "ejs" : "latest"
+  }
+}

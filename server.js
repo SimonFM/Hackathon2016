@@ -1,20 +1,24 @@
-//Lets require/import the HTTP module
-var http = require('http');
+var io      = require('socket.io'),
+    url     = require('url'),
+    sys     = require('sys'),
+    express = require('express'),
+    http    = require('http'),
+    path    = require('path');
 
-//Lets define a port we want to listen to
-const PORT=8080;
 
-//We need a function which handles requests and send response
-function handleRequest(request, response){
-    response.end('It Works!! Path Hit: ' + request.url);
-    console.log("Hey I got a hit", PORT);
-}
+var app = express();
+app.use(express.static(path.join(__dirname, '/public')));
 
-//Create a server
-var server = http.createServer(handleRequest);
+var server = http.createServer(app);
+var socket = io.listen(server);
 
-//Lets start our server
-server.listen(PORT, function(){
-    //Callback triggered when server is successfully listening. Hurray!
-    console.log("Server listening on: http://localhost:%s", PORT);
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'html');
+
+app.get('/', function(req, res){
+    res.render('index');
 });
+
+app.listen(4000);
+sys.puts('server running ' + 'now ' + Date.now());
