@@ -10,7 +10,7 @@ Link to Prezi: https://prezi.com/82jpnuk9w11h
 
 
 ### How to start
-
+You need to install MongoDB separately and add it to your environment variables in order for this to work.
 #### npm install
 #### npm start
 

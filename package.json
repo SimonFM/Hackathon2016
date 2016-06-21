@@ -1,12 +1,13 @@
 {
-  "name" : "Go-Cuan",
-  "version" : "0.0.1",
-  "scripts" : {
-    "start" : "node server.js"
+  "name": "Go-Cuan",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "start mongod --port 4001 && start node server.js"
   },
-  "dependencies" : {
-    "express" : "latest",
-    "socket.io" : "latest",
-    "ejs" : "latest"
+  "dependencies": {
+    "ejs": "latest",
+    "express": "latest",
+    "mongoose": "^4.5.1",
+    "socket.io": "latest"
   }
 }
