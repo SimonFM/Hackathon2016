@@ -1,12 +1,21 @@
 {
-  "name" : "Go-Cuan",
-  "version" : "0.0.1",
-  "scripts" : {
-    "start" : "node server.js"
-  },
-  "dependencies" : {
-    "express" : "latest",
-    "socket.io" : "latest",
-    "ejs" : "latest"
-  }
+	"name": "node-api", 
+	"Version": "1.0.0",
+	"main": "server.js",
+	"dependencies": { 
+		"express": "~4.0.0", 
+		"mongoose": "~3.6.13", 
+		"body-parser": "~1.0.1",
+		"mongodb": "^1.4.7", 
+		"simplify-commerce": "~1.1.2", 
+		"passport": "~0.2.0", 
+		"passport-local": "~1.0.0"
+	}, 
+
+	"engines":{ 
+		"node": "0.10x"
+
+
+	}
+
 }
