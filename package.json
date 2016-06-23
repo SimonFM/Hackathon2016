@@ -5,9 +5,9 @@
     "start": "start mongod --port 4001 && start node server.js"
   },
   "dependencies": {
-    "ejs": "latest",
-    "express": "latest",
-    "mongoose": "^4.5.1",
-    "socket.io": "latest"
+    "ejs"      : "latest",
+    "express"  : "latest",
+    "socket.io": "latest",
+    "mongoose" : "latest"
   }
 }
