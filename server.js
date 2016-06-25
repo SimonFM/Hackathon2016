@@ -55,6 +55,12 @@ app.post('/makePayment', function(req, res){
   //res.redirect(home);
 });
 
+app.post('/makePlan', function(req, res){
+    console.log('Plan was called.');
+    makePlan(req);
+    //res.redirect(home);
+});
+
 app.listen(port);
 console.log('Running on localhost:'+ port + ' now ' + Date.now());
 open('localhost:'+ port, 'firefox', function (err) {
@@ -86,4 +92,50 @@ function makePayment(req){
         console.log("Payment Status: " + data.paymentStatus);
     });
 
+}
+
+//creates a subscription plan
+function makePlan(request){
+    console.log('make plan');
+    client.plan.create({
+        amount : request.body.amount,
+        renewalReminderLeadDays : request.body.renewalReminderLeadDays,
+        name : request.body.name,
+        billingCycle : request.body.billingCycle,
+        frequency : request.body.frequency,
+        billingCycleLimit : request.body.billingCycleLimit ,
+        frequencyPeriod : request.body.frequencyPeriod
+    }, function(errData, data){
+        if(errData){
+            console.error("Error Message: " + errData.data.error.message);
+            // handle the error
+            return;
+        }
+        console.log("Success Response: " + JSON.stringify(data));
+    });
+}
+
+function makeUserWithPlan(){
+    client.customer.create({
+        subscriptions : [{
+                plan : "[PLAN ID]"
+            }
+        ],
+        email : "customer@mastercard.com",
+        name : "Customer Customer",
+        card : {
+            expMonth : "11",
+            expYear : "19",
+            cvc : "123",
+            number : "5555555555554444"
+        },
+        reference : "Ref1"
+    }, function(errData, data){
+        if(errData){
+            console.error("Error Message: " + errData.data.error.message);
+            // handle the error
+            return;
+        }
+        console.log("Success Response: " + JSON.stringify(data));
+    });
 }
