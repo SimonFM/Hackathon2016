@@ -21,23 +21,26 @@
         <input id="cc-cvc" type="text" maxlength="4" autocomplete="off" value="123"/>
     </div>
     <div>
+        <label>Amount to pay: </label>
+        <input id="cc-amount" type="text" maxlength="10" autocomplete="off" value="1000"/>
+    </div>
+    <div>
         <label>Expiry Date: </label>
         <select id="cc-exp-month">
-            <option value="01">Jan</option>
-            <option value="02">Feb</option>
-            <option value="03">Mar</option>
-            <option value="04">Apr</option>
+            <option value="01">January</option>
+            <option value="02">Febuary</option>
+            <option value="03">March</option>
+            <option value="04">April</option>
             <option value="05">May</option>
-            <option value="06">Jun</option>
-            <option value="07">Jul</option>
-            <option value="08">Aug</option>
-            <option value="09">Sep</option>
-            <option value="10">Oct</option>
-            <option value="11">Nov</option>
-            <option value="12">Dec</option>
+            <option value="06">June</option>
+            <option value="07">July</option>
+            <option value="08">August</option>
+            <option value="09">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
         </select>
         <select id="cc-exp-year">
-            <option value="16">2016</option>
             <option value="17">2017</option>
             <option value="18">2018</option>
             <option value="19">2019</option>
@@ -65,8 +68,7 @@
                         fieldErrorsLength = fieldErrors.length,
                         errorList = "";
                 for (var i = 0; i < fieldErrorsLength; i++) {
-                    errorList += "<div class='error'>Field: '" + fieldErrors[i].field +
-                            "' is invalid - " + fieldErrors[i].message + "</div>";
+                    errorList += "<div class='error'>Field: '" + fieldErrors[i].field +"' is invalid - " + fieldErrors[i].message + "</div>";
                 }
                 // Display the errors
                 $paymentForm.after(errorList);
@@ -82,31 +84,44 @@
             $paymentForm.get(0).submit();
         }
     }
+    var request;
     $(document).ready(function() {
+        request = getApiKey();
         $("#simplify-payment-form").on("submit", function() {
-            var apiKey = getApiKey();
             // Disable the submit button
             $("#process-payment-btn").attr("disabled", "disabled");
             // Generate a card token & handle the response
-            SimplifyCommerce.generateToken({
-                key: apiKey,
-                card: {
-                    number: $("#cc-number").val(),
-                    cvc: $("#cc-cvc").val(),
-                    expMonth: $("#cc-exp-month").val(),
-                    expYear: $("#cc-exp-year").val()
-
-                }
-            }, simplifyResponseHandler);
+            SimplifyCommerce.generateToken(getParams(), simplifyResponseHandler);
         });
 
     });
 
     function getApiKey(){
-        var key = $.get('publicKey');
-        return key.responseText;
+        return $.ajax({
+            url: 'http://localhost:4000/publicKey',
+            method: 'GET'
+        })
+        .done(function(data, textStatus, jqXHR){
+            console.log(data);
+            console.log(jqXHR.responseText);
+        });
     }
 
+    function getParams(){
+        var cardNumber = $("#cc-number").val();
+        var cvcNumber = $("#cc-cvc").val();
+        var expirationMonth = $("#cc-exp-month").val();
+        var expirationYear = $("#cc-exp-year").val();
+        return {
+            key: 'sbpb_YWIwNjQ0ZjktZjliZC00MjIxLWE4MjQtNjgwNzM1NzhiOTc1',
+            card: {
+                number: cardNumber,
+                cvc: cvcNumber,
+                expMonth: expirationMonth,
+                expYear: expirationYear
+            }
+        };
+    }
 </script>
 </body>
 </html>
