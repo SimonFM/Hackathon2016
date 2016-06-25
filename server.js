@@ -51,13 +51,23 @@ app.get('/publicKey', function(req, res){
 // This exposes an endpoint for makePayment
 app.post('/makePayment', function(req, res){
   console.log('Payment was called.');
-  makePayment(req);
+  if(!makePayment(req)){
+    res.redirect(home);
+  } else {
+      res.send('SUCCESS');
+  }
   //res.redirect(home);
 });
 
 app.post('/makePlan', function(req, res){
     console.log('Plan was called.');
     makePlan(req);
+    //res.redirect(home);
+});
+
+app.post('/makeUserWithPlan', function(req, res){
+    console.log('Plan was called.');
+    makeUserWithPlan();
     //res.redirect(home);
 });
 
@@ -95,22 +105,24 @@ function makePayment(req){
 }
 
 //creates a subscription plan
-function makePlan(request){
+function makePlan(){
     console.log('make plan');
     client.plan.create({
-        amount : request.body.amount,
-        renewalReminderLeadDays : request.body.renewalReminderLeadDays,
-        name : request.body.name,
-        billingCycle : request.body.billingCycle,
-        frequency : request.body.frequency,
-        billingCycleLimit : request.body.billingCycleLimit ,
-        frequencyPeriod : request.body.frequencyPeriod
+        amount : "1000",
+        renewalReminderLeadDays : "7",
+        name : "plan2",
+        billingCycle : "FIXED",
+        frequency : "WEEKLY",
+        billingCycleLimit : "4",
+        frequencyPeriod : "2"
     }, function(errData, data){
+
         if(errData){
             console.error("Error Message: " + errData.data.error.message);
             // handle the error
             return;
         }
+
         console.log("Success Response: " + JSON.stringify(data));
     });
 }
@@ -118,7 +130,7 @@ function makePlan(request){
 function makeUserWithPlan(){
     client.customer.create({
         subscriptions : [{
-                plan : "[PLAN ID]"
+                plan : "aXagoeGM"
             }
         ],
         email : "customer@mastercard.com",
@@ -134,7 +146,7 @@ function makeUserWithPlan(){
         if(errData){
             console.error("Error Message: " + errData.data.error.message);
             // handle the error
-            return;
+            return null;
         }
         console.log("Success Response: " + JSON.stringify(data));
     });
