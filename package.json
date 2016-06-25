@@ -6,7 +6,9 @@
   },
   "dependencies" : {
     "express" : "latest",
+    "open" : "latest",
     "socket.io" : "latest",
+    "body-parser" : "latest",
     "ejs" : "latest"
   }
 }
