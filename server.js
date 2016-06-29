@@ -1,99 +1,52 @@
-//Base setup 
-
-//call packages 
-var express = require('express'); 
-var app = express(); 
+var express = require("express");
+var logfmt = require("logfmt");
+var mongoose   = require('mongoose');
 var bodyParser = require('body-parser');
-var user = require('./models/user');
-var mogoose = require('mongoose');
-//configuring database
-mongoose.connect(config.mongoUri); 
+var app = express();
+var config = require("./config");
 
-//configure app to use body-parser getting data from post 
-app.use(bodyParser.urlencoded({ extended: true })); 
-app.use(bodyParser.json()); 
 
-var port = process.env.PORT || 4000; //set the port 
+var request = require('request');
 
-//Routes for the API 
+app.use(bodyParser());
+app.get('/', function(req, res) {
+    res.json("Welcome to our payment API");
+});
 
-var router = express.Router(); //get an instance of express router 
+app.post('/payment', function(req, res) {
+    var payment = {
+        "amount": req.body.amount,
+        "description": "Test Payment",
+        "card": {
+            "expMonth": req.body.card.expMonth,
+            "expYear": req.body.card.expYear,
+            "cvc": req.body.card.cvc,
+            "number": req.body.card.number
+        },
+        "currency": "USD"
+    };
+    config.SimplifyPay.payment.create(payment, function (errData, data) {
+        if (errData) {
+            console.log(errData);
+            console.log(data);
+            res.json({code: "0006", message: errData.data.error.fieldErrors})
+            console.log(errData.data.error.fieldErrors);
+            console.error("Error Message: " + errData.data.error.message);
+            // handle the error
+            return;
+        }
+        else{
+            res.json({code: "200", message:"Payment Successful"})
+        }
+        console.log("Payment Status: " + data.paymentStatus);
+    });
 
-//test route 
-router.get('/', function(req,res){ 
-	res.json({ message: 'hooray! welcome to our api!'}); 
+    //res.json({code: "0006", message: "heya"});
 });
 
 
 
-//More routes if any 
-
-app.use('/api', router);
-
-
-app.post('/user', function(req, res) {
-	if(req.body.id) { 
-
-// creation of user
-		var user = new user();
-		if (!req.body.email || !req.body.password || !req.body.fname || req.body.lname) {
-			var error_message = {code: '2002', message: 'Please enter additional user information!'};
-			res.send(error_message);
-		} else {
-			var user_exists = false;
-			user.find({email: req.body.email}, function(err, users) {	// Checks DB for users with this email 
-				if (users.length > 0) {
-					res.json({code: '2003', message: 'This E-mail is already in use!!'});
-				} else {
-					user.fname = req.body.fname;
-					user.lname = req.body.lname;
-					user.password = req.body.password;
-					user.email = req.body.email;
-
-					user.save(function(err) {
-						if (err) {
-							res.send(err);
-						}
-						res.json({ code: "200", message: 'Account created successfully!!' });
-					});
-				}
-
-			});
-		}
-		
-} else { 
-
-//Update User
-		User.findById(req.body.id, function(err, user) {
-			if (err) {
-				res.send(err);
-			} else {
-				// only rewrite new values
-				if (req.body.fname) {
-					user.fname = req.body.fname;
-				}
-				if (req.body.lname) {
-					user.lname = req.body.lname;
-				}
-				if (req.body.password){
-					user.password = req.body.password;
-				}
-				if (req.body.creditCardNumber) {
-					user.creditCardNumber = req.body.creditCardNumber;
-					// strip spaces or any non number characters
-					user.expiryMonth = req.body.expiryMonth;	
-					user.expiryYear = req.body.expiryYear;
-					user.cardSecurityCode = req.body.cardSecurityCode;
-				}
-			}
-
-		});
-				
-	}
+var port = Number(process.env.PORT || 4000);
+app.listen(port, function() {
+    console.log("Listening on " + port);
 });
-
-
-//start server 
-
-app.listen(port); 
-console.log('magic happens on port' + port); 

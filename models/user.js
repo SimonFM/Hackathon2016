@@ -1,17 +1,16 @@
-// app/models/user.js
-
 var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var UserSchema   = new Schema({
-    fname: String,
-    lname: String, 
-    email: String,
-    password: String, 
-    creditCardNumber: String, 
-    expiryMonth: String, 
-    expiryYear: String, 
-    cardSecurityCode: String 
+	name: String,
+	email: String,
+	password: String,
+	address: String,
+	creditCardNumber: String,
+	expMonth: String,
+	expYear: String,
+	cardVeriCode: String,
+	numberPlates: [{number: String, transactions:[{dateTime:String, location:String}]}]
 });
 
 module.exports = mongoose.model('User', UserSchema);
