@@ -2,7 +2,8 @@ var mongoose     = require('mongoose');
 var Schema       = mongoose.Schema;
 
 var UserSchema   = new Schema({
-	name: String,
+	fname: String,
+	lname: String,
 	email: String,
 	password: String,
 	address: String,
@@ -10,7 +11,6 @@ var UserSchema   = new Schema({
 	expMonth: String,
 	expYear: String,
 	cardVeriCode: String,
-	numberPlates: [{number: String, transactions:[{dateTime:String, location:String}]}]
 });
 
 module.exports = mongoose.model('User', UserSchema);
