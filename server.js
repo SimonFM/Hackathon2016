@@ -1,15 +1,21 @@
 var express = require("express");
 var logfmt = require("logfmt");
 var mongoose   = require('mongoose');
+var config = require("./config");
+var User = require('./models/user');
 var bodyParser = require('body-parser');
 var app = express();
-var config = require("./config");
 mongoose.connect(config.mongoUri);
 
+app.use(logfmt.requestLogger());
 app.use(bodyParser());
+
+
 app.get('/', function(req, res) {
     res.json("Welcome to our payment API");
 });
+
+
 //##########################################################################################
 //                                Payment
 //##########################################################################################
