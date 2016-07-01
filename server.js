@@ -15,10 +15,10 @@ app.get('/', function(req, res) {
     res.json("Welcome to our payment API");
 });
 
-
 //##########################################################################################
 //                                Payment
 //##########################################################################################
+
 app.post('/payment', function(req, res) {
     var payment = {
         "amount": req.body.amount,
@@ -35,7 +35,7 @@ app.post('/payment', function(req, res) {
         if (errData) {
             console.log(errData);
             console.log(data);
-            res.json({code: "400", message: errData.data.error.fieldErrors})
+            res.json({code: "400", message: errData.data.error.fieldErrors});
             console.log(errData.data.error.fieldErrors);
             console.error("Error Message: " + errData.data.error.message);
             // handle the error
@@ -50,6 +50,7 @@ app.post('/payment', function(req, res) {
 //##########################################################################################
 //                                User Creation
 //##########################################################################################
+
 app.post('/user', function(req, res) {
     if (req.body.id) {
         // creation of user
@@ -71,6 +72,7 @@ app.post('/user', function(req, res) {
                         user.name = req.body.name;
                         user.password = req.body.password;
                         user.email = req.body.email;
+                        user.phoneNumber = req.body.phoneNumber;
                         user.creditCardNumber = req.body.creditCardNumber;
                         user.expMonth = req.body.expMonth;
                         user.expYear = req.body.expYear;
@@ -90,6 +92,9 @@ app.post('/user', function(req, res) {
     }
 });
 
+//##########################################################################################
+//                                Get Users
+//##########################################################################################
 
 app.get('/user', function(req, res) {
     User.find(function(err, users) {
@@ -103,6 +108,7 @@ app.get('/user', function(req, res) {
 //##########################################################################################
 //                                Login
 //##########################################################################################
+
 app.post('/login', function(req, res) {
     if (!req.body.password || !req.body.email) {
         res.json({code:"400", message:"Incorrect Email/Password"});
@@ -123,6 +129,50 @@ app.post('/login', function(req, res) {
         });
     }
 });
+
+//##########################################################################################
+//                                Booking
+//##########################################################################################
+
+app.post('/booking', function(req, res) {
+    var booking = {
+        "name": user.name,
+        "email": user.email,
+        "instructor": req.body.instructor,
+        "lessonCount": req.body.lessonCount,
+        "startDate": req.body.startDate,
+        "endDate": req.body.endDate,
+        "paymentDetails": {
+            "currency": req.body.currency,
+            "costPL": req.body.costPL,
+            "card": {
+                "expMonth": user.expMonth,
+                "expYear": user.expYear,
+                "cvc": user.cardVeriCode,
+                "number": user.creditCardNumber
+            }
+        }
+    };
+
+    booking.create(function (err){
+        if (errData) {
+            console.log(errData);
+            console.log(data);
+            res.json({code: "400", message: errData.data.error.fieldErrors});
+            console.log(errData.data.error.fieldErrors);
+            console.error("Error Message: " + errData.data.error.message);
+            return;
+        }
+        else{
+            res.json({code: "200", message:"Booking Successful"})
+        }
+        console.log("Booking Status: " + data.paymentStatus);
+    });
+});
+
+//##########################################################################################
+//                                Server Port Config
+//##########################################################################################
 
 var port = Number(process.env.PORT || 4000);
 app.listen(port, function() {
