@@ -4,7 +4,7 @@
 	"main": "server.js",
 	"dependencies": { 
 		"express": "~4.0.0", 
-		"mongoose": "~3.6.13", 
+		"mongoose": "latest", 
 		"body-parser": "~1.0.1",
 		"mongodb": "^1.4.7", 
 		"simplify-commerce": "~1.1.2", 
