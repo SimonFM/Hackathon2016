@@ -57,7 +57,7 @@ app.post('/user', function(req, res) {
         User.findById(req.body.id, function (err, user) {
 
             var user = new User();
-            if (!req.body.email || !req.body.password || !req.body.fname || req.body.lname) {
+            if (!req.body.email || !req.body.password || !req.body.fname || !req.body.lname) {
                 var error_message = {
                     code: '400',
                     message: 'You must have a valid email along with a password and name to create an account!'
