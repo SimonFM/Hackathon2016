@@ -5,7 +5,7 @@ function config() {
 
 module.exports = config;
 
-config.mongoUri = 'mongodb://mchackathon:pass123@ds041150.mlab.com:41150/mchackathon2016';
+config.mongoUri = 'mongodb://localhost:27017/test';
 
 config.SimplifyPay = Simplify.getClient({
     publicKey: 'sbpb_NWVkNzAxMDctYmI4MS00N2Y5LThkYzAtYTU5NjgzZjI3ZTA5',
