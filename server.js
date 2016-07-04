@@ -3,6 +3,7 @@ var logfmt = require("logfmt");
 var mongoose   = require('mongoose');
 var config = require("./config");
 var User = require('./models/user');
+var Merchant = require('./models/merchant');
 var bodyParser = require('body-parser');
 var app = express();
 mongoose.connect(config.mongoUri);
@@ -56,7 +57,7 @@ app.post('/user', function(req, res) {
         User.findById(req.body.id, function (err, user) {
 
             var user = new User();
-            if (!req.body.email || !req.body.password || !req.body.fname || req.body.lname) {
+            if (!req.body.email || !req.body.password || !req.body.fname || !req.body.lname) {
                 var error_message = {
                     code: '400',
                     message: 'You must have a valid email along with a password and name to create an account!'
@@ -91,8 +92,59 @@ app.post('/user', function(req, res) {
 });
 
 
+app.post('/merchant', function(req, res) {
+    if (req.body.id) {
+        // creation of user
+        Merchant.findById(req.body.id, function (err, user) {
+
+            var merchant = new Merchant();
+            if (!req.body.email || !req.body.password || !req.body.fname || !req.body.lname) {
+                var error_message = {
+                    code: '400',
+                    message: 'You must have a valid email along with a password and name to create an account!'
+                };
+                res.send(error_message);
+            } else {
+                var merchant_exists = false;
+                Merchant.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
+                    if (merchant.length > 0) {
+                        res.json({code: '400', message: 'E-mail already exists!'});
+                    } else {
+                        merchant.name = req.body.name;
+                        merchant.password = req.body.password;
+                        merchant.email = req.body.email;
+                        merchant.creditCardNumber = req.body.creditCardNumber;
+                        merchant.expMonth = req.body.expMonth;
+                        merchant.expYear = req.body.expYear;
+                        merchant.cardVeriCode = req.body.cvc;
+
+
+                        merchant.save(function (err) {
+                            if (err) {
+                                res.send(err);
+                            }
+                            res.json({code: "200", message: 'Account Created Successfully'});
+                        });
+                    }
+                });
+            }
+        });
+    }
+});
+
+
 app.get('/user', function(req, res) {
     User.find(function(err, users) {
+        if (err) {
+            res.send(err);
+        }
+        res.json(users);
+    });
+});
+
+
+app.get('/merchant', function(req, res) {
+    Merchant.find(function(err, users) {
         if (err) {
             res.send(err);
         }
