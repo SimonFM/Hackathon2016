@@ -4,6 +4,7 @@ var mongoose   = require('mongoose');
 var config = require("./config");
 var User = require('./models/user');
 var Merchant = require('./models/merchant');
+var Booking = require('./models/booking');
 var bodyParser = require('body-parser');
 var app = express();
 mongoose.connect(config.mongoUri);
@@ -16,19 +17,19 @@ app.get('/', function(req, res) {
     res.json("Welcome to our payment API");
 });
 
-
 //##########################################################################################
 //                                Payment
 //##########################################################################################
+
 app.post('/payment', function(req, res) {
     var payment = {
         "amount": req.body.amount,
         "description": req.body.description,
         "card": {
-            "expMonth": user.expMonth,
-            "expYear": user.expYear,
-            "cvc": user.cardVeriCode,
-            "number": user.creditCardNumber
+            "expMonth": "12",
+            "expYear": "19",
+            "cvc": "232",
+            "number": "5555555555554444"
         },
         "currency": req.body.currency
     };
@@ -36,7 +37,7 @@ app.post('/payment', function(req, res) {
         if (errData) {
             console.log(errData);
             console.log(data);
-            res.json({code: "400", message: errData.data.error.fieldErrors})
+            res.json({code: "400", message: errData.data.error.fieldErrors});
             console.log(errData.data.error.fieldErrors);
             console.error("Error Message: " + errData.data.error.message);
             // handle the error
@@ -48,16 +49,15 @@ app.post('/payment', function(req, res) {
         console.log("Payment Status: " + data.paymentStatus);
     });
 });
+
 //##########################################################################################
 //                                User Creation
 //##########################################################################################
-app.post('/user', function(req, res) {
-    if (req.body.id) {
-        // creation of user
-        User.findById(req.body.id, function (err, user) {
 
+// creation of user
+app.post('/user', function(req, res) {
             var user = new User();
-            if (!req.body.email || !req.body.password || !req.body.fname || !req.body.lname) {
+            if (!req.body.email || !req.body.password || !req.body.name) {
                 var error_message = {
                     code: '400',
                     message: 'You must have a valid email along with a password and name to create an account!'
@@ -72,6 +72,7 @@ app.post('/user', function(req, res) {
                         user.name = req.body.name;
                         user.password = req.body.password;
                         user.email = req.body.email;
+                        user.phoneNumber = req.body.phoneNumber;
                         user.creditCardNumber = req.body.creditCardNumber;
                         user.expMonth = req.body.expMonth;
                         user.expYear = req.body.expYear;
@@ -82,23 +83,17 @@ app.post('/user', function(req, res) {
                             if (err) {
                                 res.send(err);
                             }
-                            res.json({code: "200", message: 'Account Created Successfully'});
+                            res.json({code: "200", message: 'User account created successfully'});
                         });
                     }
                 });
             }
-        });
-    }
 });
 
-
+// creation of merchant
 app.post('/merchant', function(req, res) {
-    if (req.body.id) {
-        // creation of user
-        Merchant.findById(req.body.id, function (err, user) {
-
             var merchant = new Merchant();
-            if (!req.body.email || !req.body.password || !req.body.fname || !req.body.lname) {
+            if (!req.body.email || !req.body.password || !req.body.name) {
                 var error_message = {
                     code: '400',
                     message: 'You must have a valid email along with a password and name to create an account!'
@@ -123,16 +118,18 @@ app.post('/merchant', function(req, res) {
                             if (err) {
                                 res.send(err);
                             }
-                            res.json({code: "200", message: 'Account Created Successfully'});
+                            res.json({code: "200", message: 'Merchant account created successfully'});
                         });
                     }
                 });
-            }
-        });
     }
 });
 
+//##########################################################################################
+//                                Get Users
+//##########################################################################################
 
+//get all users in db
 app.get('/user', function(req, res) {
     User.find(function(err, users) {
         if (err) {
@@ -142,19 +139,20 @@ app.get('/user', function(req, res) {
     });
 });
 
-
+//get all merchants in db
 app.get('/merchant', function(req, res) {
-    Merchant.find(function(err, users) {
+    Merchant.find(function(err, merchants) {
         if (err) {
             res.send(err);
         }
-        res.json(users);
+        res.json(merchants);
     });
 });
 
 //##########################################################################################
 //                                Login
 //##########################################################################################
+
 app.post('/login', function(req, res) {
     if (!req.body.password || !req.body.email) {
         res.json({code:"400", message:"Incorrect Email/Password"});
@@ -165,7 +163,7 @@ app.post('/login', function(req, res) {
             } else {
                 if (users.length == 1) {
                     if (req.body.password == users[0].password) {
-                        res.json({code:"200", id:users[0]._id});
+                        res.json({code:"200", message:"Logged in with user:",name:users[0].name});
                     } else {
                         res.json({code:"401", message:"No user detected with those credentials"});
                     }
@@ -175,6 +173,42 @@ app.post('/login', function(req, res) {
         });
     }
 });
+
+//##########################################################################################
+//                                Booking
+//##########################################################################################
+
+// creation of merchant
+app.post('/booking', function(req, res) {
+    var booking = new Booking();
+
+                booking.name = req.body.name;
+                booking.email = req.body.email;
+                booking.instructor = req.body.instructor;
+                booking.lessonCount = req.body.lessonCount;
+                booking.startDate = req.body.startDate;
+                booking.endDate = req.body.endDate;
+                booking.currency = req.body.currency;
+                booking.creditCardNumber = req.body.creditCardNumber;
+                booking.expMonth = req.body.expMonth;
+                booking.expYear = req.body.expYear;
+                booking.cardVeriCode = req.body.cvc;
+
+
+                 booking.save(function (err) {
+                    if (err) {
+                        res.send(err);
+                    }
+
+                    res.json({code: "200", message: "Your booking has been confirmed for: " + req.body.startDate+" To "+req.body.endDate});
+                });
+
+});
+
+
+//##########################################################################################
+//                                Server Port Config
+//##########################################################################################
 
 var port = Number(process.env.PORT || 4000);
 app.listen(port, function() {
