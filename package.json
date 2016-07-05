@@ -1,21 +1,18 @@
 {
-	"name": "node-api", 
-	"Version": "1.0.0",
-	"main": "server.js",
-	"dependencies": { 
-		"express": "~4.0.0", 
-		"mongoose": "latest", 
-		"body-parser": "~1.0.1",
-		"mongodb": "^1.4.7", 
-		"simplify-commerce": "~1.1.2", 
-		"passport": "~0.2.0", 
-		"passport-local": "~1.0.0"
-	}, 
-
-	"engines":{ 
-		"node": "0.10x"
-
-
-	}
-
+  "name": "node-api",
+  "Version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "body-parser": "~1.0.1",
+    "express": "~4.0.0",
+    "jsonwebtoken": "^7.0.1",
+    "mongodb": "^1.4.7",
+    "mongoose": "latest",
+    "passport": "~0.2.0",
+    "passport-local": "~1.0.0",
+    "simplify-commerce": "~1.1.2"
+  },
+  "engines": {
+    "node": "0.10x"
+  }
 }

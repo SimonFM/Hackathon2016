@@ -9,12 +9,15 @@ var BookingSchema = new Schema({
     lessonCount: String,
     startDate: String,
     endDate: String,
+    startHour: String,
+    endHour: String,
     currency: String,
     costPL: String,
     creditCardNumber: String,
     expMonth: String,
     expYear: String,
-    cardVeriCode: String
+    cardVeriCode: String,
+    ref:String
 });
 
 module.exports = mongoose.model('Booking', BookingSchema);
