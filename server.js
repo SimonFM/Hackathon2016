@@ -4,6 +4,7 @@ var mongoose   = require('mongoose');
 var config = require("./config");
 var User = require('./models/user');
 var Merchant = require('./models/merchant');
+var Booking = require('./models/booking');
 var bodyParser = require('body-parser');
 var app = express();
 mongoose.connect(config.mongoUri);
@@ -25,10 +26,10 @@ app.post('/payment', function(req, res) {
         "amount": req.body.amount,
         "description": req.body.description,
         "card": {
-            "expMonth": user.expMonth,
-            "expYear": user.expYear,
-            "cvc": user.cardVeriCode,
-            "number": user.creditCardNumber
+            "expMonth": "12",
+            "expYear": "19",
+            "cvc": "232",
+            "number": "5555555555554444"
         },
         "currency": req.body.currency
     };
@@ -48,15 +49,13 @@ app.post('/payment', function(req, res) {
         console.log("Payment Status: " + data.paymentStatus);
     });
 });
+
 //##########################################################################################
 //                                User Creation
 //##########################################################################################
 
+// creation of user
 app.post('/user', function(req, res) {
-    if (req.body.id) {
-        // creation of user
-        User.findById(req.body.id, function (err, user) {
-
             var user = new User();
             if (!req.body.email || !req.body.password || !req.body.name) {
                 var error_message = {
@@ -84,20 +83,15 @@ app.post('/user', function(req, res) {
                             if (err) {
                                 res.send(err);
                             }
-                            res.json({code: "200", message: 'Account Created Successfully'});
+                            res.json({code: "200", message: 'User account created successfully'});
                         });
                     }
                 });
             }
-        });
-    }
 });
 
+// creation of merchant
 app.post('/merchant', function(req, res) {
-    if (req.body.id) {
-        // creation of user
-        Merchant.findById(req.body.id, function (err, user) {
-
             var merchant = new Merchant();
             if (!req.body.email || !req.body.password || !req.body.name) {
                 var error_message = {
@@ -107,14 +101,13 @@ app.post('/merchant', function(req, res) {
                 res.send(error_message);
             } else {
                 var merchant_exists = false;
-                User.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
-                    if (merchants.length > 0) {
+                Merchant.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
+                    if (merchant.length > 0) {
                         res.json({code: '400', message: 'E-mail already exists!'});
                     } else {
                         merchant.name = req.body.name;
                         merchant.password = req.body.password;
                         merchant.email = req.body.email;
-                        merchant.phoneNumber = req.body.phoneNumber;
                         merchant.creditCardNumber = req.body.creditCardNumber;
                         merchant.expMonth = req.body.expMonth;
                         merchant.expYear = req.body.expYear;
@@ -125,12 +118,10 @@ app.post('/merchant', function(req, res) {
                             if (err) {
                                 res.send(err);
                             }
-                            res.json({code: "200", message: 'Account Created Successfully'});
+                            res.json({code: "200", message: 'Merchant account created successfully'});
                         });
                     }
                 });
-            }
-        });
     }
 });
 
@@ -138,6 +129,7 @@ app.post('/merchant', function(req, res) {
 //                                Get Users
 //##########################################################################################
 
+//get all users in db
 app.get('/user', function(req, res) {
     User.find(function(err, users) {
         if (err) {
@@ -147,12 +139,13 @@ app.get('/user', function(req, res) {
     });
 });
 
+//get all merchants in db
 app.get('/merchant', function(req, res) {
-    User.find(function(err, users) {
+    Merchant.find(function(err, merchants) {
         if (err) {
             res.send(err);
         }
-        res.json(users);
+        res.json(merchants);
     });
 });
 
@@ -170,7 +163,7 @@ app.post('/login', function(req, res) {
             } else {
                 if (users.length == 1) {
                     if (req.body.password == users[0].password) {
-                        res.json({code:"200", id:users[0]._id});
+                        res.json({code:"200", message:"Logged in with user:",name:users[0].name});
                     } else {
                         res.json({code:"401", message:"No user detected with those credentials"});
                     }
@@ -185,41 +178,33 @@ app.post('/login', function(req, res) {
 //                                Booking
 //##########################################################################################
 
+// creation of merchant
 app.post('/booking', function(req, res) {
-    var booking = {
-        "name": user.name,
-        "email": user.email,
-        "instructor": req.body.instructor,
-        "lessonCount": req.body.lessonCount,
-        "startDate": req.body.startDate,
-        "endDate": req.body.endDate,
-        "paymentDetails": {
-            "currency": req.body.currency,
-            "costPL": req.body.costPL,
-            "card": {
-                "expMonth": user.expMonth,
-                "expYear": user.expYear,
-                "cvc": user.cardVeriCode,
-                "number": user.creditCardNumber
-            }
-        }
-    };
+    var booking = new Booking();
 
-    booking.create(function (err){
-        if (errData) {
-            console.log(errData);
-            console.log(data);
-            res.json({code: "400", message: errData.data.error.fieldErrors});
-            console.log(errData.data.error.fieldErrors);
-            console.error("Error Message: " + errData.data.error.message);
-            return;
-        }
-        else{
-            res.json({code: "200", message:"Booking Successful"})
-        }
-        console.log("Booking Status: " + data.paymentStatus);
-    });
+                booking.name = req.body.name;
+                booking.email = req.body.email;
+                booking.instructor = req.body.instructor;
+                booking.lessonCount = req.body.lessonCount;
+                booking.startDate = req.body.startDate;
+                booking.endDate = req.body.endDate;
+                booking.currency = req.body.currency;
+                booking.creditCardNumber = req.body.creditCardNumber;
+                booking.expMonth = req.body.expMonth;
+                booking.expYear = req.body.expYear;
+                booking.cardVeriCode = req.body.cvc;
+
+
+                 booking.save(function (err) {
+                    if (err) {
+                        res.send(err);
+                    }
+
+                    res.json({code: "200", message: "Your booking has been confirmed for: " + req.body.startDate+" To "+req.body.endDate});
+                });
+
 });
+
 
 //##########################################################################################
 //                                Server Port Config
