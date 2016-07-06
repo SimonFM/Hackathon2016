@@ -140,29 +140,6 @@ app.post('/merchant', function (req, res) {
                     }
 
                 }
-
-                //while(start < end){
-                //    var newDate = start.setDate(start.getDate() + 1);
-                //    start = new Date(newDate);
-                //    var startHour = 9;
-                //    var endHour = startHour + 1;
-                //
-                //    while(startHour < 21){
-                //        var booking = new Booking();
-                //        booking.name = "EMPTY";
-                //        booking.email = "EMPTY";
-                //        booking.instructor = req.body.name;
-                //        booking.lessonCount = "EMPTY";
-                //        booking.startDate = newDate;
-                //        booking.endDate = start;
-                //        booking.startHour = startHour;
-                //        booking.endHour = endHour;
-                //        booking.ref = "EMPTY";
-                //        booking.save();
-                //        startHour = startHour + 1;
-                //        endHour = startHour + 1;
-                //    }
-                //}
             }
         });
     }
