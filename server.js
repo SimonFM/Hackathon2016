@@ -111,13 +111,39 @@ app.post('/merchant', function (req, res) {
                 merchant.expYear = req.body.expYear;
                 merchant.cardVeriCode = req.body.cvc;
 
-
                 merchant.save(function (err) {
                     if (err) {
                         res.send(err);
                     }
                     res.json({code: "200", message: 'Merchant account created successfully'});
                 });
+                var i = 0;
+                var start = new Date();
+                var endDateAsString = start.getDate()+"/"+ start.getMonth()+"/"+(start.getFullYear()+1);
+                var end = new Date(endDateAsString);
+
+                while(start < end){
+                    var newDate = start.setDate(start.getDate() + 1);
+                    start = new Date(newDate);
+                    var startHour = 9;
+                    var endHour = startHour + 1;
+
+                    while(startHour < 21){
+                        var booking = new Booking();
+                        booking.name = "EMPTY";
+                        booking.email = "EMPTY";
+                        booking.instructor = req.body.name;
+                        booking.lessonCount = "EMPTY";
+                        booking.startDate = newDate;
+                        booking.endDate = start;
+                        booking.startHour = startHour;
+                        booking.endHour = endHour;
+                        booking.ref = "EMPTY";
+                        booking.save();
+                        startHour = startHour + 1;
+                        endHour = startHour + 1;
+                    }
+                }
             }
         });
     }
