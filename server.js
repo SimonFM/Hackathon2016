@@ -6,6 +6,7 @@ var User = require('./models/user');
 var Merchant = require('./models/merchant');
 var Booking = require('./models/booking');
 var bodyParser = require('body-parser');
+var moment = require('moment');
 var app = express();
 mongoose.connect(config.mongoUri);
 
@@ -117,33 +118,51 @@ app.post('/merchant', function (req, res) {
                     }
                     res.json({code: "200", message: 'Merchant account created successfully'});
                 });
-                var i = 0;
-                var start = new Date();
-                var endDateAsString = start.getDate()+"/"+ start.getMonth()+"/"+(start.getFullYear()+1);
-                var end = new Date(endDateAsString);
+                var a = moment(new Date());
+                var b = moment(new Date());
+                b.add(365, 'days');
 
-                while(start < end){
-                    var newDate = start.setDate(start.getDate() + 1);
-                    start = new Date(newDate);
-                    var startHour = 9;
-                    var endHour = startHour + 1;
-
-                    while(startHour < 21){
+                for (var m = moment(a); m.isBefore(b); m.add(1, 'days')) {
+                    var endTime = 21;
+                    var tomorrow = moment(m);
+                    for( var i = 9; i < endTime; i = i + 1){
                         var booking = new Booking();
                         booking.name = "EMPTY";
                         booking.email = "EMPTY";
                         booking.instructor = req.body.name;
                         booking.lessonCount = "EMPTY";
-                        booking.startDate = newDate;
-                        booking.endDate = start;
-                        booking.startHour = startHour;
-                        booking.endHour = endHour;
+                        booking.startDate = a;
+                        booking.endDate = tomorrow;
+                        booking.startHour = i;
+                        booking.endHour = i+1;
                         booking.ref = "EMPTY";
                         booking.save();
-                        startHour = startHour + 1;
-                        endHour = startHour + 1;
                     }
+
                 }
+
+                //while(start < end){
+                //    var newDate = start.setDate(start.getDate() + 1);
+                //    start = new Date(newDate);
+                //    var startHour = 9;
+                //    var endHour = startHour + 1;
+                //
+                //    while(startHour < 21){
+                //        var booking = new Booking();
+                //        booking.name = "EMPTY";
+                //        booking.email = "EMPTY";
+                //        booking.instructor = req.body.name;
+                //        booking.lessonCount = "EMPTY";
+                //        booking.startDate = newDate;
+                //        booking.endDate = start;
+                //        booking.startHour = startHour;
+                //        booking.endHour = endHour;
+                //        booking.ref = "EMPTY";
+                //        booking.save();
+                //        startHour = startHour + 1;
+                //        endHour = startHour + 1;
+                //    }
+                //}
             }
         });
     }
