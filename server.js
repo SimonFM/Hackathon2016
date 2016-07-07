@@ -205,6 +205,35 @@ app.post('/booking', function(req, res) {
 
 });
 
+//##########################################################################################
+//                                Get Bookings
+//##########################################################################################
+
+//get all bookings in the db
+app.get('/booking', function (req, res) {
+    Booking.find(function (err, bookings) {
+        if (err) {
+            res.send(err);
+        }
+        res.json(bookings);
+    });
+});
+
+//get all bookings for particular merchant
+app.post('/merchantBooking', function (req, res) {
+    var booking = new Booking();
+
+    booking.merchant = req.body.merchant;
+
+    Booking.find({merchant: booking.merchant}, function (err, bookings){
+        if(bookings.length > 0){
+            res.json(bookings);
+        }
+        else{
+            res.json({message: 'There are no bookings at present for this merchant!'});
+        }
+    });
+});
 
 //##########################################################################################
 //                                Server Port Config
