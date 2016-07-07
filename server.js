@@ -128,14 +128,14 @@ app.post('/merchant', function (req, res) {
                     for( var i = 9; i < endTime; i = i + 1){
                         var booking = new Booking();
                         booking.name = "EMPTY";
-                        booking.email = "EMPTY";
-                        booking.instructor = req.body.name;
-                        booking.lessonCount = "EMPTY";
+                        booking.email = null;
+                        booking.merchant = req.body.name;
+                        booking.lessonCount = null;
                         booking.startDate = a;
                         booking.endDate = tomorrow;
                         booking.startHour = i;
                         booking.endHour = i+1;
-                        booking.ref = "EMPTY";
+                        booking.ref = null;
                         booking.save();
                     }
 
@@ -267,9 +267,9 @@ app.post('/booking', function (req, res) {
 //                                Get Bookings
 //##########################################################################################
 
-//get all bookings in the db
+//get all active bookings in the db
 app.get('/booking', function (req, res) {
-    Booking.find(function (err, bookings) {
+    Booking.find().where('ref').ne(null).exec(function (err, bookings) {
         if (err) {
             res.send(err);
         }
@@ -277,14 +277,28 @@ app.get('/booking', function (req, res) {
     });
 });
 
-//get all bookings for particular merchant
+//get all active bookings for particular merchant
 app.post('/merchantBooking', function (req, res) {
     var booking = new Booking();
 
     booking.merchant = req.body.merchant;
+    Booking.find({merchant: booking.merchant}).where('ref').equals(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
+            res.json(bookings);
+        }
+        else{
+            res.json({message: 'There are no bookings at present for this merchant!'});
+        }
+    });
+});
 
-    Booking.find({merchant: booking.merchant}, function (err, bookings){
-        if(bookings.length > 0){
+//get all empty bookings for particular merchant
+app.post('/merchantEmptyBooking', function (req, res) {
+    var booking = new Booking();
+
+    booking.merchant = req.body.merchant;
+    Booking.find({merchant: booking.merchant}).where('ref').equals(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
             res.json(bookings);
         }
         else{
