@@ -229,7 +229,7 @@ app.post('/booking', function (req, res) {
 
     booking.name = req.body.name;
     booking.email = req.body.email;
-    booking.instructor = req.body.instructor;
+    booking.merchant = req.body.merchant;
     booking.lessonCount = req.body.lessonCount;
     booking.startDate = req.body.startDate;
     booking.endDate = req.body.endDate;
@@ -240,7 +240,7 @@ app.post('/booking', function (req, res) {
     booking.expMonth = req.body.expMonth;
     booking.expYear = req.body.expYear;
     booking.cardVeriCode = req.body.cvc;
-    booking.ref = req.body.instructor + "-" + req.body.startDate + "-" + req.body.endDate +"-"+ req.body.startTime +"-"+ req.body.endTime;
+    booking.ref = req.body.merchant + "-" + req.body.startDate + "-" + req.body.endDate +"-"+ req.body.startHour +"-"+ req.body.endHour;
 
     Booking.find({ref: booking.ref}, function (err, bookings) {
         if (bookings.length > 0) {
@@ -255,7 +255,7 @@ app.post('/booking', function (req, res) {
 
                 res.json({
                     code: "200",
-                    message: "Your booking with " + req.body.instructor + " has been confirmed and will commence on: " + req.body.startDate + " At "+req.body.startTime
+                    message: "Your booking with " + req.body.merchant + " has been confirmed and will commence on: " + req.body.startDate + " At "+req.body.startHour
                     +" and finish on: " + req.body.endDate + " At "+req.body.endTime
                 });
             });
@@ -277,6 +277,21 @@ app.get('/booking', function (req, res) {
     });
 });
 
+//get all bookings for particular merchant
+app.post('/merchantBooking', function (req, res) {
+    var booking = new Booking();
+
+    booking.merchant = req.body.merchant;
+
+    Booking.find({merchant: booking.merchant}, function (err, bookings){
+        if(bookings.length > 0){
+            res.json(bookings);
+        }
+        else{
+            res.json({message: 'There are no bookings at present for this merchant!'});
+        }
+    });
+});
 //##########################################################################################
 //                                Server Port Config
 //##########################################################################################

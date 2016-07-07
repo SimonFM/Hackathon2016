@@ -5,7 +5,7 @@ var BookingSchema = new Schema({
     name: String,
     email: String,
     phoneNumber: String,
-    instructor: String,
+    merchant: String,
     lessonCount: String,
     startDate: String,
     endDate: String,
