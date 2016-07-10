@@ -43,8 +43,7 @@ app.post('/payment', function (req, res) {
             console.error("Error Message: " + errData.data.error.message);
             // handle the error
             return;
-        }
-        else {
+        } else {
             res.json({code: "200", message: "Payment Successful"})
         }
         console.log("Payment Status: " + data.paymentStatus);
@@ -160,6 +159,16 @@ app.get('/user', function (req, res) {
     });
 });
 
+//get a single user in db
+app.post('/singleUser', function (req, res) {
+    User.find({email: req.body.email}, function (err, user) {
+        if (err) {
+            res.send(err);
+        }
+        res.json(user);
+    });
+});
+
 //get all merchants in db
 app.get('/merchant', function (req, res) {
     Merchant.find(function (err, merchants) {
@@ -191,9 +200,7 @@ app.post('/login', function (req, res) {
                         } else {
                             res.json({code: "401", message: "Not allowed!"});
                         }
-                    }
-                    //user login
-                    else {
+                    } else {
                         User.find({email: req.body.email}, function (err, users) {
                             if (err) {
                                 res.json({code: "502", message: "Cannot connect to the database!"});
@@ -205,9 +212,7 @@ app.post('/login', function (req, res) {
                                     } else {
                                         res.json({code: "401", message: "Not allowed!"});
                                     }
-                                }
-                                //Handle no response
-                                else {
+                                } else {
                                     res.json({message:"No account found with those credentials!"});
                                 }
 
@@ -246,9 +251,7 @@ app.post('/booking', function (req, res) {
     Booking.find({ref: booking.ref}, function (err, bookings) {
         if (bookings.length > 0) {
             res.json({message: 'This booking is unavailable at this current time!'});
-        }
-
-        else {
+        } else {
             booking.save(function (err) {
                 if (err) {
                     res.send(err);
@@ -256,8 +259,8 @@ app.post('/booking', function (req, res) {
 
                 res.json({
                     code: "200",
-                    message: "Your booking with " + req.body.merchant + " has been confirmed and will commence on: " + req.body.startDate + " At "+req.body.startHour
-                    +" and finish on: " + req.body.endDate + " At "+req.body.endHour
+                    message: "Your booking with " + req.body.merchant + " has been confirmed and will commence on: "
+                    + req.body.startDate + " At "+req.body.startHour +" and finish on: " + req.body.endDate + " At "+req.body.endHour
                 });
             });
         }
@@ -285,8 +288,7 @@ app.post('/merchantBooking', function (req, res) {
     Booking.find({merchant: booking.merchant}).where('ref').ne(null).exec(function (err, bookings){
         if(bookings.length > 0 ){
             res.json(bookings);
-        }
-        else{
+        } else{
             res.json({message: 'There are no bookings at present for this merchant!'});
         }
     });
@@ -300,8 +302,7 @@ app.post('/merchantEmptyBooking', function (req, res) {
     Booking.find({merchant: booking.merchant}).where('ref').equals(null).exec(function (err, bookings){
         if(bookings.length > 0 ){
             res.json(bookings);
-        }
-        else{
+        } else{
             res.json({message: 'There are no bookings at present for this merchant!'});
         }
     });
@@ -316,8 +317,7 @@ app.post('/searchEmptyBooking', function (req, res) {
     Booking.find({merchant: booking.merchant,endDate: booking.date}).where('ref').equals(null).exec(function (err, bookings){
         if(bookings.length > 0 ){
             res.json(bookings);
-        }
-        else{
+        } else{
             res.json({message: 'There are no bookings on: '+req.body.date+' currently available!'});
         }
     });
