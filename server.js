@@ -183,47 +183,60 @@ app.get('/merchant', function (req, res) {
 //                                Login
 //##########################################################################################
 
+//user login
 app.post('/login', function (req, res) {
     if (!req.body.password || !req.body.email) {
         res.json({code: "400", message: "You must have a valid email and password"});
     } else {
-        console.log(req.body);
-    //merchant login
-        Merchant.find({email: req.body.email}, function (err, merchants) {
+            User.find({email: req.body.email}, function (err, users) {
                 if (err) {
                     res.json({code: "502", message: "Cannot connect to the database!"});
                 } else {
-                    if (merchants.length == 1) {
+                    if (users.length == 1) {
                         //successful login response
-                        if (req.body.password == merchants[0].password) {
-                            res.json({Type: "Merchant", message: "Welcome back " + merchants[0].name});
+                        if (req.body.password == users[0].password) {
+                            res.json({Type: "User", message: "Welcome back " + users[0].name});
                         } else {
                             res.json({code: "401", message: "Not allowed!"});
                         }
-                    } else {
-                        User.find({email: req.body.email}, function (err, users) {
-                            if (err) {
-                                res.json({code: "502", message: "Cannot connect to the database!"});
-                            } else {
-                                if (users.length == 1) {
-                                    //successful login response
-                                    if (req.body.password == users[0].password) {
-                                        res.json({Type: "User", message: "Welcome back " + users[0].name});
-                                    } else {
-                                        res.json({code: "401", message: "Not allowed!"});
-                                    }
-                                } else {
-                                    res.json({message:"No account found with those credentials!"});
-                                }
-
-                            }});
-
-
                     }
+                    //Handle no response
+                    else {
+                        res.json({message: "No account found with those credentials!"});
+                    }
+
+                }
+            });
+
+        }
+});
+//merchant login
+app.post('/merchantLogin', function (req, res) {
+    if (!req.body.password || !req.body.email) {
+        res.json({code: "400", message: "You must have a valid email and password"});
+    } else {
+        Merchant.find({email: req.body.email}, function (err, merchants) {
+            if (err) {
+                res.json({code: "502", message: "Cannot connect to the database!"});
+            } else {
+                if (merchants.length == 1) {
+                    //successful login response
+                    if (req.body.password == merchants[0].password) {
+                        res.sendfile('Merchant/success.html');
+                        console.log({message: "No account found with those credentials!"});
+
+                    } else {
+                        res.json({code: "401", message: "Not allowed!"});
+                    }
+                }
+                //Handle no response
+                else {
+                    res.json({message: "No account found with those credentials!"});
                 }
 
             }
-        );
+        });
+
     }
 });
 //##########################################################################################
