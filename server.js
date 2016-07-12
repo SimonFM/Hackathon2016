@@ -34,10 +34,20 @@ app.get('/', function(req, res){
    });
 
  // login as merchant
- app.get('/login', function(req, res){
+ app.get('/', function(req, res){
      console.log('accessing login');
      res.render('login');
  });
+
+//get all active bookings in the db
+app.get('/view', function (req, res) {
+    Booking.find().where('ref').ne(null).exec(function (err, bookings) {
+        if (err) {
+            res.send(err);
+        }
+        res.json(bookings);
+    });
+});
 
  //merchant login
  app.post('/merchantLogin', function (req, res) {
@@ -70,7 +80,7 @@ app.get('/', function(req, res){
 
      }
  });
-
+//merchant signup
 app.post('/merchant', function (req, res) {
     var merchant = new Merchant();
     if (!req.body.email || !req.body.password || !req.body.name) {
@@ -361,6 +371,20 @@ app.post('/searchEmptyBooking', function (req, res) {
         }
     });
 });
+
+//get all active bookings for particular user
+app.post('/userBooking', function (req, res) {
+    var booking = new Booking();
+    booking.user = req.body.user;
+    Booking.find({user: booking.user}).where('ref').ne(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
+            res.json(bookings);
+        } else{
+            res.json({message: 'There are no bookings at present for this user!'});
+        }
+    });
+});
+
 //##########################################################################################
 //                                Server Port Config
 //##########################################################################################
