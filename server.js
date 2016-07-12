@@ -307,6 +307,17 @@ app.post('/merchantBooking', function (req, res) {
     });
 });
 
+//get all active bookings for particular merchant
+app.post('/userBookings', function (req, res) {
+    Booking.find({email: req.body.email}).where('ref').ne(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
+            res.json(bookings);
+        } else{
+            res.json({message: 'There are no bookings at present for this user!'});
+        }
+    });
+});
+
 //get all empty bookings for particular merchant
 app.post('/merchantEmptyBooking', function (req, res) {
     var booking = new Booking();
