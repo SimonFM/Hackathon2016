@@ -39,25 +39,23 @@ app.get('/', function(req, res){
    });
 
  // login as merchant
- app.get('/', function(req, res){
+ app.get('/merchLogin', function(req, res){
      console.log('accessing login');
      res.render('login');
  });
 
 //get all active bookings in the db
-app.get('/view', function (req, res) {
-    Booking.find().where('ref').ne(null).exec(function (err, bookings) {
-        if (err) {
-            res.send(err);
-        }
-        res.json(bookings);
-    });
+app.get('/account', function(req, res){
+    console.log('accessing merchant account');
+    res.render('merchant');
 });
 
  //merchant login
  app.post('/merchantLogin', function (req, res) {
      if (!req.body.password || !req.body.email) {
-         res.json({code: "400", message: "You must have a valid email and password"});
+         res.render('invalid');
+         console.log({code: "400", message: "You must have a valid email and password"});
+
      } else {
          Merchant.find({email: req.body.email}, function (err, merchants) {
              if (err) {
@@ -67,10 +65,10 @@ app.get('/view', function (req, res) {
                      //successful login response
                      if (req.body.password == merchants[0].password) {
                          console.log('Merchant logged in!');
-                         res.render('merchant');
+                         res.render('success');
 
                      } else {
-                         res.render('Login');
+                         res.render('login');
                          console.log({code: "401", message: "Not allowed!"});
                      }
                  }

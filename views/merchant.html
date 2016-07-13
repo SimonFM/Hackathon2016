@@ -28,22 +28,70 @@
     <link rel="shortcut icon" href="/public/images/logo.png">
 
     <!-- Document.ready for calendar -->
-    <script>
+    <script type="text/javascript">
+
+
         $(document).ready(function() {
 
-            // page is now ready, initialize the calendar...
-
             $('#calendar').fullCalendar({
-                weekends: false
-            })
+                theme:{
+                  Boolean,default: true
 
-            $('#calendar').fullCalendar({
-                dayClick: function() {
-                    res.render('/success.html');
-                }
+                },
+
+                customButtons: {
+                    myCustomButton: {
+                        text: 'custom!',
+                        click: function() {
+                            alert('clicked the custom button!');
+                        }
+                    }
+                },
+                buttonIcons: {
+                    prev: 'left-single-arrow',
+                    next: 'right-single-arrow',
+                    prevYear: 'left-double-arrow',
+                    nextYear: 'right-double-arrow'
+
+                },
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                },
+                defaultDate: '2016-06-12',
+                weekends:false,
+                editable: false,
+                eventLimit: true,
+                events: [
+                    {
+                        title: 'Click for Google',
+                        url: '',
+                        start: '2016-06-28'
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2016-06-28'
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2016-06-28'
+
+                    },
+                    {
+                        title: 'Click for Google',
+                        url: 'http://google.com/',
+                        start: '2016-06-28'
+
+                    }]
+
             });
 
         });
+
+
     </script>
 
 </head>
@@ -56,12 +104,12 @@
 
 <div id = "alert_placeholder"></div>
 <div class="container">
-    <h3>Your Bookings </h3>
+    <h3>Your Bookings: </h3>
     </br>
     <div class="jumbotron">
-        <div id='calendar'></div>
-    </div>
+        <div id="calendar"></div>
 
+    </div>
     <!-- Footer -->
 </div>
 <div class="clearfix visible-lg"></div>
