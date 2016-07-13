@@ -7,14 +7,19 @@ var Merchant = require('./models/merchant');
 var Booking = require('./models/booking');
 var bodyParser = require('body-parser');
 var Moment = require('moment');
+var jquery = require('jquery');
 var app = express();
 mongoose.connect(config.mongoUri);
 
 app.use(logfmt.requestLogger());
 app.use(bodyParser());
+
 app.engine('.html', require('ejs').__express);
 app.set('views', __dirname + '/views');
 app.set('view engine', 'html');
+
+app.set('view options', { layout: false });
+app.use('/public', express.static('public'));
 
 
 //##########################################################################################
