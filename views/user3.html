@@ -13,7 +13,7 @@
     <script src="/public/JS/fullcalendar.min.js" type="text/javascript"></script>
 
     <!-- Title -->
-    <title>Merchant Portal | Login</title>
+    <title>Merchant Portal | Booking</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -27,36 +27,44 @@
 
     <link rel="shortcut icon" href="/public/images/logo.png">
 
-    <script>
-        var timer = setTimeout(function() {
-            window.location='/merchLogin'
-        }, 1500);
-    </script>
 </head>
 
 <body>
 <div class="page-header">
     <h1><img alt="Brand" src="/public/images/logo.png" style="width:85px;height:85px;"/> Merchant Portal </h1>
 </div>
-
-
 <div id = "alert_placeholder"></div>
 <div class="container">
     <div class="jumbotron">
-        <center><img alt="image" src="public/images/error.png" style="width:250px;height:250px;"/></center>
-        <center><h2>You must have a valid email address or password!</h2></center>
+        <div class="jumbotron" style="background-color:#272b30">
+            <center><img alt="Brand" src="/public/images/logo.png" style="width:75px;height:65px;"/></center>
+            <div class="page-header"> <h3>Name:</h3></div>
+            <bold><h4 style="font-family: 'Arial Black';">Nimon Karkham</h4></bold>
+            </br>
+            <div class="page-header"> <h3>Date:</h3></div>
+            <bold><h4 style="font-family: 'Arial Black';">2016-06-19</h4></bold>
+            </br>
+            <div class="page-header"> <h3>Time:</h3></div>
+            <bold><h4 style="font-family: 'Arial Black';">16:00</h4></bold>
+            </br>
+            <div class="page-header"> <h3>Payment Method:</h3></div>
+            <bold><h4 style="font-family: 'Arial Black';">Simplify Commerce</h4></bold>
+        </div>
+
+        <center><a href="confirmation" class="btn btn-info" role="button" style="width: 400px; height: 50px; color:white;font-size: 20px; font-family:'Arial Black'"><b>Confirm</b></a></center>
+
     </div>
 
 
 
     <div class="clearfix visible-lg"></div>
-<center>
-    <footer class ="footer">
-        <div class = "container">
-            <p class=" text-muted">Merchant Portal &copy; 2016</p>
-        </div>
-    </footer>
-</center>
+    <center>
+        <footer class ="footer">
+            <div class = "container">
+                <p class=" text-muted">Merchant Portal &copy; 2016</p>
+            </div>
+        </footer>
+    </center>
 </div>
 
 </body>

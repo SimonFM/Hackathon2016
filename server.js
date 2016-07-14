@@ -32,6 +32,30 @@ app.get('/', function(req, res){
     res.render('login');
 });
 
+app.get('/merchantBooked1', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('user1');
+});
+
+app.get('/merchantBooked2', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('user2');
+});
+
+app.get('/merchantBooked3', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('user3');
+});
+
+app.get('/testUser', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('testUser');
+});
+app.get('/confirmation', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('confirm');
+});
+
 // creation of merchant
    app.get('/signup', function(req, res){
        console.log('accessing signup');
