@@ -7,15 +7,138 @@ var Merchant = require('./models/merchant');
 var Booking = require('./models/booking');
 var bodyParser = require('body-parser');
 var Moment = require('moment');
+var jquery = require('jquery');
 var app = express();
 mongoose.connect(config.mongoUri);
 
 app.use(logfmt.requestLogger());
 app.use(bodyParser());
 
+app.engine('.html', require('ejs').__express);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'html');
 
-app.get('/', function (req, res) {
-    res.json("Welcome to our Booking API");
+app.set('view options', { layout: false });
+app.use('/public', express.static('public'));
+
+
+//##########################################################################################
+//                                Merchant Portal endpoints
+//##########################################################################################
+
+// This is the root page.
+app.get('/', function(req, res){
+    console.log('Rendering Merchant Portal');
+    res.render('login');
+});
+
+// creation of merchant
+   app.get('/signup', function(req, res){
+       console.log('accessing signup');
+       res.render('signup');
+   });
+
+ // login as merchant
+ app.get('/merchLogin', function(req, res){
+     console.log('accessing login');
+     res.render('login');
+ });
+
+//get all active bookings in the db
+app.get('/account', function(req, res){
+    console.log('accessing merchant account');
+    res.render('merchant');
+});
+
+ //merchant login
+ app.post('/merchantLogin', function (req, res) {
+     if (!req.body.password || !req.body.email) {
+         res.render('invalid');
+         console.log({code: "400", message: "You must have a valid email and password"});
+
+     } else {
+         Merchant.find({email: req.body.email}, function (err, merchants) {
+             if (err) {
+                 res.json({code: "502", message: "Cannot connect to the database!"});
+             } else {
+                 if (merchants.length == 1) {
+                     //successful login response
+                     if (req.body.password == merchants[0].password) {
+                         console.log('Merchant logged in!');
+                         res.render('success');
+
+                     } else {
+                         res.render('login');
+                         console.log({code: "401", message: "Not allowed!"});
+                     }
+                 }
+                 //Handle no response
+                 else {
+                     res.render('Login');
+                     console.log({message: "No account found with those credentials!"});
+                 }
+
+             }
+         });
+
+     }
+ });
+//merchant signup
+app.post('/merchant', function (req, res) {
+    var merchant = new Merchant();
+    if (!req.body.email || !req.body.password || !req.body.name) {
+        var error_message = {
+            code: '400',
+            message: 'You must have a valid email along with a password and name to create an account!'
+        };
+        res.send(error_message);
+    } else {
+        Merchant.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
+            if (merchants.length > 0) {
+                res.render('signup');
+                console.log({code: '400', message: 'E-mail already exists!'});
+            } else {
+                merchant.name = req.body.name;
+                merchant.password = req.body.password;
+                merchant.email = req.body.email;
+                merchant.creditCardNumber = req.body.creditCardNumber;
+                merchant.expMonth = req.body.expMonth;
+                merchant.expYear = req.body.expYear;
+                merchant.cardVeriCode = req.body.cvc;
+
+                merchant.save(function (err) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    res.render('login');
+                    console.log('Merchant account created successfully!')
+                });
+                var a = Moment(new Date());
+                var b = Moment(new Date());
+                b.add(365, 'days');
+
+
+                for (var m = Moment(a); m.isBefore(b); m.add(1, 'days')) {
+                    var endTime = 21;
+                    var tomorrow = Moment(m);
+                    for( var i = 9; i < endTime; i = i + 1){
+                        var booking = new Booking();
+                        booking.name = "EMPTY";
+                        booking.email = null;
+                        booking.merchant = req.body.name;
+                        booking.lessonCount = null;
+                        booking.startDate = a.format('LL');
+                        booking.endDate = tomorrow.format('LL');
+                        booking.startHour = i;
+                        booking.endHour = i+1;
+                        booking.ref = null;
+                        booking.save();
+                    }
+
+                }
+            }
+        });
+    }
 });
 
 //##########################################################################################
@@ -89,62 +212,6 @@ app.post('/user', function (req, res) {
     }
 });
 
-// creation of merchant
-app.post('/merchant', function (req, res) {
-    var merchant = new Merchant();
-    if (!req.body.email || !req.body.password || !req.body.name) {
-        var error_message = {
-            code: '400',
-            message: 'You must have a valid email along with a password and name to create an account!'
-        };
-        res.send(error_message);
-    } else {
-        Merchant.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
-            if (merchants.length > 0) {
-                res.json({code: '400', message: 'E-mail already exists!'});
-            } else {
-                merchant.name = req.body.name;
-                merchant.password = req.body.password;
-                merchant.email = req.body.email;
-                merchant.creditCardNumber = req.body.creditCardNumber;
-                merchant.expMonth = req.body.expMonth;
-                merchant.expYear = req.body.expYear;
-                merchant.cardVeriCode = req.body.cvc;
-
-                merchant.save(function (err) {
-                    if (err) {
-                        res.send(err);
-                    }
-                    res.json({code: "200", message: 'Merchant account created successfully'});
-                });
-                var a = Moment(new Date());
-                var b = Moment(new Date());
-                b.add(365, 'days');
-
-
-                for (var m = Moment(a); m.isBefore(b); m.add(1, 'days')) {
-                    var endTime = 21;
-                    var tomorrow = Moment(m);
-                    for( var i = 9; i < endTime; i = i + 1){
-                        var booking = new Booking();
-                        booking.name = "EMPTY";
-                        booking.email = null;
-                        booking.merchant = req.body.name;
-                        booking.lessonCount = null;
-                        booking.startDate = a.format('LL');
-                        booking.endDate = tomorrow.format('LL');
-                        booking.startHour = i;
-                        booking.endHour = i+1;
-                        booking.ref = null;
-                        booking.save();
-                    }
-
-                }
-            }
-        });
-    }
-});
-
 //##########################################################################################
 //                                Get Users
 //##########################################################################################
@@ -210,35 +277,7 @@ app.post('/login', function (req, res) {
 
         }
 });
-//merchant login
-app.post('/merchantLogin', function (req, res) {
-    if (!req.body.password || !req.body.email) {
-        res.json({code: "400", message: "You must have a valid email and password"});
-    } else {
-        Merchant.find({email: req.body.email}, function (err, merchants) {
-            if (err) {
-                res.json({code: "502", message: "Cannot connect to the database!"});
-            } else {
-                if (merchants.length == 1) {
-                    //successful login response
-                    if (req.body.password == merchants[0].password) {
-                        res.sendfile('Merchant/success.html');
-                        console.log({message: "No account found with those credentials!"});
 
-                    } else {
-                        res.json({code: "401", message: "Not allowed!"});
-                    }
-                }
-                //Handle no response
-                else {
-                    res.json({message: "No account found with those credentials!"});
-                }
-
-            }
-        });
-
-    }
-});
 //##########################################################################################
 //                               Create Booking
 //##########################################################################################
@@ -307,20 +346,6 @@ app.post('/merchantBooking', function (req, res) {
     });
 });
 
-//get all active bookings for particular merchant
-app.post('/userBooking', function (req, res) {
-    var booking = new Booking();
-    booking.user = req.body.user;
-    Booking.find({user: booking.user}).where('ref').ne(null).exec(function (err, bookings){
-        if(bookings.length > 0 ){
-            res.json(bookings);
-        } else{
-            res.json({message: 'There are no bookings at present for this user!'});
-        }
-    });
-});
-
-
 //get all empty bookings for particular merchant
 app.post('/merchantEmptyBooking', function (req, res) {
     var booking = new Booking();
@@ -349,6 +374,20 @@ app.post('/searchEmptyBooking', function (req, res) {
         }
     });
 });
+
+//get all active bookings for particular user
+app.post('/userBooking', function (req, res) {
+    var booking = new Booking();
+    booking.user = req.body.user;
+    Booking.find({user: booking.user}).where('ref').ne(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
+            res.json(bookings);
+        } else{
+            res.json({message: 'There are no bookings at present for this user!'});
+        }
+    });
+});
+
 //##########################################################################################
 //                                Server Port Config
 //##########################################################################################
