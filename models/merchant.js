@@ -5,6 +5,7 @@ var MerchantSchema = new Schema({
     name: String,
     email: String,
     phoneNumber: String,
+    description: String,
     password: String,
     address: String,
     creditCardNumber: String,

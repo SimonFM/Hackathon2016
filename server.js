@@ -101,6 +101,7 @@ app.post('/merchant', function (req, res) {
                 merchant.name = req.body.name;
                 merchant.password = req.body.password;
                 merchant.email = req.body.email;
+                merchant.description = req.body.description;
                 merchant.creditCardNumber = req.body.creditCardNumber;
                 merchant.expMonth = req.body.expMonth;
                 merchant.expYear = req.body.expYear;
@@ -195,6 +196,7 @@ app.post('/user', function (req, res) {
                 user.password = req.body.password;
                 user.email = req.body.email;
                 user.phoneNumber = req.body.phoneNumber;
+                user.description = req.body.description;
                 user.creditCardNumber = req.body.creditCardNumber;
                 user.expMonth = req.body.expMonth;
                 user.expYear = req.body.expYear;
