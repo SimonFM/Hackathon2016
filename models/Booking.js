@@ -17,7 +17,8 @@ var BookingSchema = new Schema({
     expMonth: String,
     expYear: String,
     cardVeriCode: String,
-    ref:String
+    ref:String,
+    isPaid:String
 });
 
 module.exports = mongoose.model('Booking', BookingSchema);

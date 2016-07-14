@@ -156,7 +156,8 @@ app.post('/payment', function (req, res) {
             "cvc": "232",
             "number": "5555555555554444"
         },
-        "currency": req.body.currency
+        "currency": req.body.currency,
+        "isPayed": true
     };
     config.SimplifyPay.payment.create(payment, function (errData, data) {
         if (errData) {
@@ -301,6 +302,7 @@ app.post('/booking', function (req, res) {
     booking.expYear = req.body.expYear;
     booking.cardVeriCode = req.body.cvc;
     booking.ref = req.body.merchant + "-" + req.body.startDate + "-" + req.body.endDate +"-"+ req.body.startHour +"-"+ req.body.endHour;
+    booking.isPayed = false;
 
     Booking.find({ref: booking.ref}, function (err, bookings) {
         if (bookings.length > 0) {
