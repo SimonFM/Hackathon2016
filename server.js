@@ -9,7 +9,7 @@ var bodyParser = require('body-parser');
 var Moment = require('moment');
 var jquery = require('jquery');
 var app = express();
-mongoose.connect(config.mongoUri);
+
 
 app.use(logfmt.requestLogger());
 app.use(bodyParser());
@@ -392,7 +392,6 @@ app.post('/userBooking', function (req, res) {
 //                                Server Port Config
 //##########################################################################################
 
-var port = Number(process.env.PORT || 4000);
-app.listen(port, function () {
-    console.log("Listening on " + port);
+http.listen(process.env.PORT || 3000, function(){
+  console.log('listening on', http.address().port);
 });

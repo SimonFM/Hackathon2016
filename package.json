@@ -1,11 +1,11 @@
 {
 	"name": "node-api",
 	"Version": "1.0.0",
-	"scripts" :{
-		"start":"node server.js"
-
-	},
-
+	"main":"server.js",
+	 "scripts": {
+    		"test": "echo \"Error: no test specified\" && exit 1"
+  		},
+  	
 	"dependencies": {
 		"body-parser": "~1.0.1",
 		"express": "~4.0.0",
@@ -17,6 +17,9 @@
 		"simplify-commerce": "~1.1.2",
 		"moment":"latest",
 		"jquery":"latest"
-	}
-
+	},
+	"engines": {
+    		"node": "4.1.1"
+  		}
+	
 }
