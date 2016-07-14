@@ -212,6 +212,39 @@ app.post('/user', function (req, res) {
     }
 });
 
+// creation of merchant
+app.post('/merchant', function (req, res) {
+    var merchant = new Merchant();
+    if (!req.body.email || !req.body.password || !req.body.name) {
+        var error_message = {
+            code: '400',
+            message: 'You must have a valid email along with a password and name to create an account!'
+        };
+        res.send(error_message);
+    } else {
+        Merchant.find({email: req.body.email}, function (err, merchants) {	// Check users in the DB for the same email
+            if (merchants.length > 0) {
+                res.json({code: '400', message: 'E-mail already exists!'});
+            } else {
+                merchant.name = req.body.name;
+                merchant.password = req.body.password;
+                merchant.email = req.body.email;
+                merchant.creditCardNumber = req.body.creditCardNumber;
+                merchant.expMonth = req.body.expMonth;
+                merchant.expYear = req.body.expYear;
+                merchant.cardVeriCode = req.body.cvc;
+
+                merchant.save(function (err) {
+                    if (err) {
+                        res.send(err);
+                    }
+                    res.json({code: "200", message: 'Merchant account created successfully'});
+                });
+            }
+        });
+    }
+});
+
 //##########################################################################################
 //                                Get Users
 //##########################################################################################
@@ -345,6 +378,18 @@ app.post('/merchantBooking', function (req, res) {
         }
     });
 });
+
+//get all active bookings for particular merchant
+app.post('/userBooking', function (req, res) {
+    Booking.find({email: req.body.email}).where('ref').ne(null).exec(function (err, bookings){
+        if(bookings.length > 0 ){
+            res.json(bookings);
+        } else{
+            res.json({message: 'There are no bookings at present for this user!'});
+        }
+    });
+});
+
 
 //get all empty bookings for particular merchant
 app.post('/merchantEmptyBooking', function (req, res) {
